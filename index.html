@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lolly Burgers - Menu</title>
+    <link rel="icon" type="image/x-icon" href="img/Logo/LOLLYBURGERS LOGO-1.png">
+     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+    <!-- Tailwind CSS CDN with custom config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandOrange: '#FF8C00', // Main orange color
+                        brandYellow: '#FFD700', // Main yellow color
+                        brandWhite: '#FFFFFF',  // Main white color
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif'], // A slightly more distinctive font for headings
+                    }
+                },
+            }
+        }
+    </script>
+    <!-- Custom styles to override or add specific details not easily covered by Tailwind -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Berkshire+Swash&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--tw-colors-brandWhite);
+            color: var(--tw-colors-brandOrange); /* Default text color as brandOrange */
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--tw-colors-brandOrange);
+        }
+        .text-brandOrange { color: var(--tw-colors-brandOrange); }
+        .bg-brandOrange { background-color: var(--tw-colors-brandOrange); }
+        .border-brandOrange { border-color: var(--tw-colors-brandOrange); }
+        .text-brandYellow { color: var(--tw-colors-brandYellow); }
+        .bg-brandYellow { background-color: var(--tw-colors-brandYellow); }
+        .border-brandYellow { border-color: var(--tw-colors-brandYellow); }
+        .text-brandWhite { color: var(--tw-colors-brandWhite); }
+        .bg-brandWhite { background-color: var(--tw-colors-brandWhite); }
+        .border-brandWhite { border-color: var(--tw-colors-brandWhite); }
+
+        /* Ensure scrollbar in category buttons looks good */
+        .category-scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .category-scroll-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .category-scroll-container::-webkit-scrollbar-thumb {
+            background: #FFD700; /* brandYellow */
+            border-radius: 3px;
+        }
+        .category-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #FF8C00; /* brandOrange */
+        }
+
+        /* Hide scrollbar for category on mobile while still allowing scroll */
+        @media (max-width: 768px) {
+            .category-scroll-container {
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+            }
+            .category-scroll-container::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, Opera */
+            }
+        }
+
+        /* Custom spinner for loading states if needed */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #FFD700; /* brandYellow */
+            width: 30px;
+            height: 30px;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+        }
+
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* AOS overrides for smoother transitions, if needed */
+        [data-aos] {
+            transition-property: all;
+            transition-duration: 500ms;
+            transition-timing-function: ease-out;
+        }
+    </style>
+
+    <!-- AOS (Animate On Scroll) Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Feather Icons CDN -->
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body class="bg-brandWhite text-brandOrange min-h-screen flex flex-col relative">
+
+    <!-- Header Section -->
+    <header class="sticky top-0 z-50 bg-brandWhite shadow-md p-4">
+        <div class="container mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <button onclick="renderPage('home')" class="flex items-center space-x-2 focus:outline-none">
+                <img src="img/Logo/LOLLYBURGERS LOGO-1.png" alt="Lolly Burgers Logo" class="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover">
+                <h1 class="text-2xl md:text-3xl text-brandOrange" style="font-family: 'Berkshire Swash', cursive;">
+  Lolly Burgers
+</h1>
+
+            </button>
+
+            <!-- Search, Filter, Cart Icons -->
+            <div class="flex items-center space-x-4 md:space-x-6">
+                <!-- Search Input -->
+                <div class="relative hidden sm:block">
+                    <input type="text" id="searchInput" placeholder="Buscar pratos..."
+                        class="pl-10 pr-4 py-2 rounded-full border border-brandYellow focus:outline-none focus:ring-2 focus:ring-brandYellow bg-brandWhite text-brandOrange text-sm md:text-base w-40 md:w-64"
+                        onkeyup="filterMenuItems()">
+                    <i data-feather="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-brandOrange text-opacity-70"></i>
+                </div>
+                
+                <!-- Search Icon for Mobile -->
+                <button id="searchToggleButton" class="sm:hidden p-2 rounded-full bg-brandYellow hover:bg-brandOrange transition-colors text-brandWhite focus:outline-none">
+                    <i data-feather="search" class="w-5 h-5"></i>
+                </button>
+
+                <!-- Filter Button -->
+                <button id="filterButton" class="p-2 rounded-full bg-brandYellow hover:bg-brandOrange transition-colors text-brandWhite focus:outline-none">
+                    <i data-feather="sliders" class="w-5 h-5"></i>
+                </button>
+
+                <!-- Cart Icon -->
+                <div class="relative">
+                    <button id="cartButton" class="p-2 rounded-full bg-brandYellow hover:bg-brandOrange transition-colors text-brandWhite focus:outline-none">
+                        <i data-feather="shopping-cart" class="w-5 h-5"></i>
+                    </button>
+                    <span id="cartItemCount" class="absolute -top-1 -right-1 bg-brandOrange text-brandWhite text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Search Input (toggles visibility) -->
+        <div id="mobileSearchContainer" class="sm:hidden mt-3 hidden">
+            <div class="relative w-full">
+                <input type="text" id="mobileSearchInput" placeholder="Buscar pratos..."
+                    class="pl-10 pr-4 py-2 rounded-full border border-brandYellow focus:outline-none focus:ring-2 focus:ring-brandYellow bg-brandWhite text-brandOrange text-sm w-full"
+                    onkeyup="filterMenuItems()">
+                <i data-feather="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-brandOrange text-opacity-70"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Category Navigation -->
+    <nav class="sticky top-[72px] md:top-[80px] z-40 bg-brandWhite shadow-sm py-3 border-b border-brandYellow">
+        <div class="container mx-auto px-4">
+            <div id="categoryNav" class="flex overflow-x-auto whitespace-nowrap space-x-2 md:space-x-4 category-scroll-container pb-2">
+                <button class="category-btn active bg-brandOrange text-brandWhite px-4 py-2 rounded-full text-sm md:text-base font-semibold transition-colors duration-200 hover:bg-brandYellow hover:text-brandOrange focus:outline-none focus:ring-2 focus:ring-brandOrange" data-category="Todos">Todos</button>
+                <button class="category-btn bg-brandYellow text-brandOrange px-4 py-2 rounded-full text-sm md:text-base font-semibold transition-colors duration-200 hover:bg-brandOrange hover:text-brandWhite focus:outline-none focus:ring-2 focus:ring-brandYellow" data-category="Hambúrgueres">Hambúrgueres</button>
+                <button class="category-btn bg-brandYellow text-brandOrange px-4 py-2 rounded-full text-sm md:text-base font-semibold transition-colors duration-200 hover:bg-brandOrange hover:text-brandWhite focus:outline-none focus:ring-2 focus:ring-brandYellow" data-category="Fahitas">Fahitas</button>
+                <button class="category-btn bg-brandYellow text-brandOrange px-4 py-2 rounded-full text-sm md:text-base font-semibold transition-colors duration-200 hover:bg-brandOrange hover:text-brandWhite focus:outline-none focus:ring-2 focus:ring-brandYellow" data-category="Combo">Combo</button>
+                <button class="category-btn bg-brandYellow text-brandOrange px-4 py-2 rounded-full text-sm md:text-base font-semibold transition-colors duration-200 hover:bg-brandOrange hover:text-brandWhite focus:outline-none focus:ring-2 focus:ring-brandYellow" data-category="Porções">Porções</button>
+                <button class="category-btn bg-brandYellow text-brandOrange px-4 py-2 rounded-full text-sm md:text-base font-semibold transition-colors duration-200 hover:bg-brandOrange hover:text-brandWhite focus:outline-none focus:ring-2 focus:ring-brandYellow" data-category="Bebidas">Bebidas</button>
+                <button class="category-btn bg-brandYellow text-brandOrange px-4 py-2 rounded-full text-sm md:text-base font-semibold transition-colors duration-200 hover:bg-brandOrange hover:text-brandWhite focus:outline-none focus:ring-2 focus:ring-brandYellow" data-category="Por encomenda">Por encomenda</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow container mx-auto p-4 md:p-6 lg:p-8">
+        <!-- Home/Menu List View -->
+        <section id="menuListView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10">
+            <!-- Menu items will be dynamically loaded here -->
+        </section>
+
+        <!-- Dish Detail View (Initially hidden) -->
+        <section id="dishDetailView" class="hidden fixed inset-0 bg-brandWhite overflow-y-auto z-50 p-4 md:p-8 lg:p-12">
+            <div class="max-w-4xl mx-auto bg-brandWhite rounded-lg shadow-xl p-6 md:p-8" data-aos="zoom-in-up">
+                <div class="flex items-center mb-6">
+                    <button onclick="renderPage('home')" class="p-2 rounded-full bg-brandYellow hover:bg-brandOrange text-brandWhite transition-colors focus:outline-none mr-4">
+                        <i data-feather="arrow-left" class="w-6 h-6"></i>
+                    </button>
+                    <h2 id="detailDishName" class="text-3xl md:text-4xl font-heading font-bold text-brandOrange flex-grow"></h2>
+                </div>
+                
+                <img id="detailDishImage" src="" alt="Dish Image" class="w-full h-64 md:h-96 object-cover rounded-lg mb-6 shadow-md">
+                
+                <p id="detailDishFullDescription" class="text-base md:text-lg text-brandOrange mb-6 leading-relaxed"></p>
+                
+                <div class="flex items-baseline justify-between mb-6">
+                    <span id="detailDishPrice" class="text-4xl md:text-5xl font-heading font-bold text-brandYellow"></span>
+                    <div class="flex items-center space-x-3">
+                        <button id="detailRemoveFromCartBtn" class="p-2 rounded-full bg-brandYellow hover:bg-brandOrange text-brandWhite transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i data-feather="minus" class="w-6 h-6"></i>
+                        </button>
+                        <span id="detailQuantity" class="text-2xl font-bold text-brandOrange">1</span>
+                        <button id="detailAddToCartBtn" class="p-2 rounded-full bg-brandYellow hover:bg-brandOrange text-brandWhite transition-colors focus:outline-none">
+                            <i data-feather="plus" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="detailSizes" class="mb-6">
+                    <h3 class="text-xl font-heading font-semibold text-brandOrange mb-3">Tamanhos:</h3>
+                    <div id="sizesContainer" class="flex flex-wrap gap-3">
+                        <!-- Sizes will be dynamically loaded here -->
+                    </div>
+                </div>
+
+                <div id="detailExtras" class="mb-8">
+                    <h3 class="text-xl font-heading font-semibold text-brandOrange mb-3">Extras Opcionais:</h3>
+                    <div id="extrasContainer" class="flex flex-wrap gap-3">
+                        <!-- Extras will be dynamically loaded here -->
+                    </div>
+                </div>
+
+                <button id="addDishToCart" class="w-full py-3 px-6 bg-brandOrange text-brandWhite text-xl font-heading font-semibold rounded-full hover:bg-brandYellow hover:text-brandOrange transition-colors duration-300 focus:outline-none focus:ring-4 focus:ring-brandOrange">
+                    Adicionar ao Carrinho
+                </button>
+            </div>
+        </section>
+
+        <!-- Cart View (Initially hidden) -->
+        <section id="cartView" class="hidden fixed inset-0 bg-brandWhite overflow-y-auto z-50 p-4 md:p-8 lg:p-12">
+            <div class="max-w-4xl mx-auto bg-brandWhite rounded-lg shadow-xl p-6 md:p-8" data-aos="fade-left">
+                <div class="flex items-center mb-6">
+                    <button onclick="renderPage('home')" class="p-2 rounded-full bg-brandYellow hover:bg-brandOrange text-brandWhite transition-colors focus:outline-none mr-4">
+                        <i data-feather="arrow-left" class="w-6 h-6"></i>
+                    </button>
+                    <h2 class="text-3xl md:text-4xl font-heading font-bold text-brandOrange flex-grow">Seu Carrinho</h2>
+                </div>
+                
+                <div id="cartItemsContainer" class="space-y-4 mb-8">
+                    <!-- Cart items will be dynamically loaded here -->
+                    <p id="emptyCartMessage" class="text-brandOrange text-center text-lg mt-8">Seu carrinho está vazio.</p>
+                </div>
+
+                <div class="flex justify-between items-center border-t border-brandYellow pt-4 mt-8">
+                    <span class="text-xl font-heading font-semibold text-brandOrange">Total:</span>
+                    <span id="cartTotalPrice" class="text-3xl font-heading font-bold text-brandYellow">0 KZ</span>
+                </div>
+
+                <div class="mt-8 border-t border-brandYellow pt-6">
+                    <h3 class="text-2xl font-heading font-semibold text-brandOrange mb-4">Escolha a Opção de Entrega:</h3>
+                    
+                    <div class="flex flex-col md:flex-row gap-4 mb-6">
+                        <button id="deliveryOptionBtn" class="flex-1 py-3 px-6 rounded-lg text-xl font-semibold transition-colors duration-300 focus:outline-none border-2 border-brandYellow bg-brandWhite text-brandOrange hover:bg-brandYellow hover:text-brandOrange">
+                            Delivery
+                        </button>
+                        <button id="pickupOptionBtn" class="flex-1 py-3 px-6 rounded-lg text-xl font-semibold transition-colors duration-300 focus:outline-none border-2 border-brandYellow bg-brandWhite text-brandOrange hover:bg-brandYellow hover:text-brandOrange">
+                            Ir buscar no local
+                        </button>
+                    </div>
+
+                    <div id="deliveryForm" class="hidden p-4 rounded-lg bg-brandYellow bg-opacity-10 mb-6">
+                        <h4 class="text-xl font-heading font-semibold text-brandOrange mb-3">Detalhes para Delivery:</h4>
+                        <input type="text" id="deliveryName" placeholder="Seu Nome" class="w-full p-3 rounded-md mb-3 border border-brandYellow focus:outline-none focus:ring-2 focus:ring-brandOrange bg-brandWhite text-brandOrange">
+                        <input type="tel" id="deliveryContact" placeholder="Seu Contacto (ex: 923038025)" class="w-full p-3 rounded-md mb-3 border border-brandYellow focus:outline-none focus:ring-2 focus:ring-brandOrange bg-brandWhite text-brandOrange">
+                        <input type="text" id="deliveryAddress" placeholder="Endereço de Entrega" class="w-full p-3 rounded-md mb-3 border border-brandYellow focus:outline-none focus:ring-2 focus:ring-brandOrange bg-brandWhite text-brandOrange">
+                        <textarea id="deliveryNotes" placeholder="Observações (ex: sem cebola)" rows="3" class="w-full p-3 rounded-md border border-brandYellow focus:outline-none focus:ring-2 focus:ring-brandOrange bg-brandWhite text-brandOrange"></textarea>
+                    </div>
+
+                    <div id="pickupForm" class="hidden p-4 rounded-lg bg-brandYellow bg-opacity-10 mb-6">
+                        <h4 class="text-xl font-heading font-semibold text-brandOrange mb-3">Detalhes para Recolha:</h4>
+                        <input type="text" id="pickupName" placeholder="Seu Nome" class="w-full p-3 rounded-md mb-3 border border-brandYellow focus:outline-none focus:ring-2 focus:ring-brandOrange bg-brandWhite text-brandOrange">
+                        <input type="tel" id="pickupContact" placeholder="Seu Contacto (ex: 923038025)" class="w-full p-3 rounded-md mb-3 border border-brandYellow focus:outline-none focus:ring-2 focus:ring-brandOrange bg-brandWhite text-brandOrange">
+                    </div>
+                </div>
+
+                <button id="finalizePurchaseBtn" class="w-full py-4 px-6 bg-brandOrange text-brandWhite text-2xl font-heading font-semibold rounded-full hover:bg-brandYellow hover:text-brandOrange transition-colors duration-300 focus:outline-none focus:ring-4 focus:ring-brandOrange disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Finalizar Compra
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Filter Modal (Overlay) -->
+    <div id="filterModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] hidden">
+        <div class="bg-brandWhite rounded-lg p-6 w-11/12 max-w-md shadow-lg" data-aos="zoom-in">
+            <h3 class="text-2xl font-heading font-bold text-brandOrange mb-5">Opções de Filtro</h3>
+            
+            <div class="mb-4">
+                <label class="block text-brandOrange text-lg font-semibold mb-2">Preço:</label>
+                <div class="flex space-x-3">
+                    <button class="filter-option-btn price-filter flex-1 py-2 px-4 rounded-full border-2 border-brandYellow bg-brandWhite text-brandOrange hover:bg-brandYellow hover:text-brandOrange transition-colors" data-filter-type="price" data-filter-value="asc">Menor Preço</button>
+                    <button class="filter-option-btn price-filter flex-1 py-2 px-4 rounded-full border-2 border-brandYellow bg-brandWhite text-brandOrange hover:bg-brandYellow hover:text-brandOrange transition-colors" data-filter-type="price" data-filter-value="desc">Maior Preço</button>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-brandOrange text-lg font-semibold mb-2">Popularidade:</label>
+                <div class="flex space-x-3">
+                    <button class="filter-option-btn popularity-filter flex-1 py-2 px-4 rounded-full border-2 border-brandYellow bg-brandWhite text-brandOrange hover:bg-brandYellow hover:text-brandOrange transition-colors" data-filter-type="popularity" data-filter-value="desc">Mais Pedidos</button>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-brandOrange text-lg font-semibold mb-2">Restrições Alimentares:</label>
+                <div class="flex flex-wrap gap-3">
+                    <button class="filter-option-btn dietary-filter py-2 px-4 rounded-full border-2 border-brandYellow bg-brandWhite text-brandOrange hover:bg-brandYellow hover:text-brandOrange transition-colors" data-filter-type="dietary" data-filter-value="gluten-free">Sem Glúten</button>
+                    <button class="filter-option-btn dietary-filter py-2 px-4 rounded-full border-2 border-brandYellow bg-brandWhite text-brandOrange hover:bg-brandYellow hover:text-brandOrange transition-colors" data-filter-type="dietary" data-filter-value="vegetarian">Vegetariano</button>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <button id="resetFiltersButton" class="py-2 px-5 rounded-full bg-brandYellow text-brandOrange font-semibold hover:bg-brandOrange hover:text-brandWhite transition-colors focus:outline-none">
+                    Limpar Filtros
+                </button>
+                <button id="applyFiltersButton" class="py-2 px-5 rounded-full bg-brandOrange text-brandWhite font-semibold hover:bg-brandYellow hover:text-brandOrange transition-colors focus:outline-none">
+                    Aplicar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-brandOrange text-brandWhite py-6 md:py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm md:text-base mb-3">© 2025 Lolly Burgers. Todos os direitos reservados.</p>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 md:space-x-8 mb-4">
+                <a href="tel:+244923038025" class="flex items-center space-x-2 hover:text-brandYellow transition-colors">
+                    <i data-feather="phone" class="w-5 h-5"></i>
+                    <span>+244 923 038 025</span>
+                </a>
+                <span class="flex items-center space-x-2">
+                    <i data-feather="map-pin" class="w-5 h-5"></i>
+                    <span>Centralidade do Kilamba W28</span>
+                </span>
+            </div>
+            <div class="flex items-center justify-center space-x-6">
+                <a href="https://www.instagram.com/lolly_burgers?igsh=aTlxY3ZsMDFkaHd6" target="_blank" rel="noopener noreferrer" class="hover:text-brandYellow transition-colors">
+                    <i data-feather="instagram" class="w-6 h-6"></i>
+                </a>
+                <a href="https://wa.me/244923038025" target="_blank" rel="noopener noreferrer" class="hover:text-brandYellow transition-colors">
+                    <i data-feather="message-circle" class="w-6 h-6"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS Initialization -->
+    <script>
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out',
+            once: true,
+            mirror: false,
+        });
+    </script>
+    
+    <!-- Feather Icons Replacement -->
+    <script>
+        feather.replace();
+    </script>
+
+    <!-- JavaScript for dynamic content and interactivity -->
+    <script>
+        // --- Data Definitions ---
+        const menuItemsData = [
+            {
+                id: 'hamburguer-suculento',
+                name: 'Suculento',
+                category: 'Hambúrgueres',
+                shortDescription: 'Pão, carne suculenta, queijo, alface, tomate, molho especial.',
+                fullDescription: 'Nosso clássico Suculento é uma explosão de sabor com carne grelhada na perfeição, queijo derretido, vegetais frescos e nosso molho secreto. Uma verdadeira experiência Lolly Burgers. Preparado com ingredientes de alta qualidade para garantir o melhor sabor em cada mordida.',
+                price: 2500, // in KZ
+                image: 'img/pratos/Suculento.jpg',
+                sizes: ['standard'],
+                extras: ['Queijo Extra (+500 KZ)', 'Molho Extra (+300 KZ)'],
+                popular: true,
+                dietary: [],
+            },
+            {
+                id: 'hamburguer-suculento-dois-ovos',
+                name: 'Suculento com Dois Ovos',
+                category: 'Hambúrgueres',
+                shortDescription: 'Pão, carne, queijo, alface, tomate, dois ovos, molho especial.',
+                fullDescription: 'Uma variação rica do nosso Suculento, com a adição de dois ovos fritos à perfeição, adicionando uma textura e sabor extra. Ideal para quem ama um bom brunch! Combina a suculência da carne com a cremosidade dos ovos.',
+                price: 2800,
+                image: 'img/pratos/com 2.jpg',
+                sizes: ['standard'],
+                extras: ['Queijo Extra (+500 KZ)', 'Bacon Extra (+700 KZ)'],
+                popular: false,
+                dietary: [],
+            },
+            {
+                id: 'hamburguer-super-suculento-bacon',
+                name: 'Super Suculento + Bacon',
+                category: 'Hambúrgueres',
+                shortDescription: 'Pão, carne, queijo, alface, tomate, bacon crocante, molho especial.',
+                fullDescription: 'Para os amantes de bacon! Nosso Super Suculento leva generosas fatias de bacon crocante, elevando o sabor a um novo patamar. Uma combinação irresistível que vai te deixar com água na boca.',
+                price: 3200,
+                image: 'img/pratos/com bacon.jpg',
+                sizes: ['standard'],
+                extras: ['Queijo Extra (+500 KZ)', 'Molho Extra (+300 KZ)'],
+                popular: true,
+                dietary: [],
+            },
+            {
+                id: 'hamburguer-suculento-duplo',
+                name: 'Suculento Duplo',
+                category: 'Hambúrgueres',
+                shortDescription: 'Duas carnes suculentas, queijo duplo, alface, tomate, molho especial.',
+                fullDescription: 'O dobro do sabor! Com duas carnes e queijo duplo, o Suculento Duplo é para os que não têm medo de um desafio e querem o máximo de satisfação. Perfeito para o apetite voraz, garantindo uma refeição robusta e deliciosa.',
+                price: 5500,
+                image: 'img/pratos/duplo.jpg',
+                sizes: ['standard', 'duplo'],
+                extras: ['Queijo Extra (+500 KZ)', 'Bacon Extra (+700 KZ)'],
+                popular: true,
+                dietary: [],
+            },
+            {
+                id: 'fahita-frango',
+                name: 'Fahita de Frango',
+                category: 'Fahitas',
+                shortDescription: 'Tiras de frango grelhadas, pimentos, cebola, tortilhas.',
+                fullDescription: 'Nossas Fahitas de Frango são preparadas com suculentas tiras de frango grelhadas, pimentos coloridos e cebola caramelizada, servidas com tortilhas macias e molho à escolha. Uma explosão de sabores frescos e texturas variadas.',
+                price: 3000,
+                image: 'img/pratos/de frango.jpg',
+                sizes: ['standard'],
+                extras: ['Guacamole (+1000 KZ)', 'Sour Cream (+700 KZ)'],
+                popular: false,
+                dietary: [],
+            },
+            {
+                id: 'fahita-carne',
+                name: 'Fahita de Carne',
+                category: 'Fahitas',
+                shortDescription: 'Tiras de carne grelhadas, pimentos, cebola, tortilhas.',
+                fullDescription: 'Desfrute das nossas Fahitas de Carne com tenras tiras de bife grelhado, pimentos vibrantes e cebola, servidas com tortilhas frescas. Uma experiência tex-mex autêntica que vai te transportar para o México a cada garfada.',
+                price: 4000,
+                image: 'img/pratos/de carne.jpg',
+                sizes: ['standard'],
+                extras: ['Queijo Ralado (+700 KZ)', 'Jalapeños (+500 KZ)'],
+                popular: true,
+                dietary: [],
+            },
+            {
+                id: 'combo-super-suculento',
+                name: 'Super Suculento Composto + Batata + Gasosa',
+                category: 'Combo',
+                shortDescription: 'Hambúrguer Super Suculento, batata frita e refrigerante.',
+                fullDescription: 'O combo perfeito para uma refeição completa! Inclui nosso famoso Super Suculento, uma porção generosa de batata frita crocante e uma gasosa à sua escolha para acompanhar. Tudo o que você precisa em uma única e deliciosa oferta.',
+                price: 5000,
+                image: 'img/pratos/com refri.jpg',
+                sizes: ['standard'],
+                extras: [],
+                popular: true,
+                dietary: [],
+            },
+            {
+                id: 'batata-frita',
+                name: 'Batata Frita',
+                category: 'Porções',
+                shortDescription: 'Batatas fritas crocantes e douradas.',
+                fullDescription: 'Nossas batatas fritas são cortadas à mão, crocantes por fora e macias por dentro, salpicadas com o sal perfeito. O acompanhamento ideal para qualquer prato, impossível comer apenas uma!',
+                price: 1000,
+                image: 'img/pratos/batata.jpg',
+                sizes: ['pequena', 'média', 'grande'],
+                extras: ['Molho de Queijo (+500 KZ)', 'Bacon Bits (+700 KZ)'],
+                popular: true,
+                dietary: ['gluten-free', 'vegetarian'],
+            },
+            {
+                id: 'batata-doce',
+                name: 'Batata Doce',
+                category: 'Porções',
+                shortDescription: 'Batatas doces fritas, levemente adocicadas.',
+                fullDescription: 'Uma alternativa deliciosa, as nossas batatas doces fritas são naturalmente adocicadas e perfeitas para quem busca algo diferente. Servidas quentinhas e crocantes, são um deleite para o paladar.',
+                price: 1000,
+                image: 'img/pratos/doce.jpg',
+                sizes: ['pequena', 'média', 'grande'],
+                extras: ['Molho de Maionese Picante (+400 KZ)'],
+                popular: false,
+                dietary: ['gluten-free', 'vegetarian'],
+            },
+            {
+                id: 'coca-cola',
+                name: 'Coca-Cola',
+                category: 'Bebidas',
+                shortDescription: 'Refrigerante clássico de cola.',
+                fullDescription: 'A Coca-Cola original, gelada e refrescante. O acompanhamento perfeito para o seu Lolly Burger, trazendo um sabor inconfundível.',
+                price: 1000,
+                image: 'img/pratos/cola.png',
+                sizes: ['330ml', '500ml'],
+                extras: ['Gelo'],
+                popular: true,
+                dietary: [],
+            },
+            {
+                id: 'fanta-laranja',
+                name: 'Fanta de Laranja',
+                category: 'Bebidas',
+                shortDescription: 'Refrigerante de laranja efervescente.',
+                fullDescription: 'Refrescante Fanta de Laranja, com seu sabor cítrico e borbulhante. Uma explosão de alegria a cada gole, perfeita para energizar seu dia.',
+                price: 1000,
+                image: 'img/pratos/fanta.jpg',
+                sizes: ['330ml', '500ml'],
+                extras: ['Gelo'],
+                popular: false,
+                dietary: [],
+            },
+            {
+                id: 'sprite',
+                name: 'Sprite',
+                category: 'Bebidas',
+                shortDescription: 'Refrigerante cítrico e transparente.',
+                fullDescription: 'Sprite, o refrigerante com sabor limão-lima que refresca em qualquer momento. Leve e efervescente, é a escolha ideal para quem busca algo leve e saboroso.',
+                price: 1000,
+                image: 'img/pratos/sprite.jpg',
+                sizes: ['330ml', '500ml'],
+                extras: ['Gelo'],
+                popular: false,
+                dietary: [],
+            },
+            {
+                id: 'agua-pura-pequena',
+                name: 'Água Pura Pequena',
+                category: 'Bebidas',
+                shortDescription: 'Água mineral natural.',
+                fullDescription: 'Água mineral pura e refrescante, ideal para se manter hidratado. Essencial para acompanhar qualquer refeição, garantindo leveza e bem-estar.',
+                price: 250,
+                image: 'img/pratos/AGUA-DE-MESA-PET-PURA-500ml.jpg',
+                sizes: ['500ml'],
+                extras: [],
+                popular: true,
+                dietary: [],
+            },
+            {
+                id: 'mini-hamburguer-duzia',
+                name: 'Mini Hambúrguer (1 dúzia)',
+                category: 'Por encomenda',
+                shortDescription: '12 mini hambúrgueres perfeitos para eventos.',
+                fullDescription: 'Ideal para festas e eventos, a nossa dúzia de mini hambúrgueres é feita com os mesmos ingredientes frescos e saborosos, em tamanho reduzido para petiscar. Surpreenda seus convidados com essa delícia!',
+                price: 19000,
+                image: 'img/pratos/mini.jpg',
+                sizes: ['1 dúzia'],
+                extras: ['Molhos variados (+1500 KZ)'],
+                popular: false,
+                dietary: [],
+            },
+            {
+                id: 'mini-cachorro-duzia',
+                name: 'Mini Cachorro (1 dúzia)',
+                category: 'Por encomenda',
+                shortDescription: '12 mini cachorros-quentes para festas.',
+                fullDescription: 'Uma dúzia de mini cachorros-quentes deliciosos, perfeitos para servir em celebrações ou como um petisco divertido. Pão macio, salsicha saborosa e molhos à escolha. A alegria garantida para qualquer ocasião!',
+                price: 16000,
+                image: 'img/pratos/hd.jpg',
+                sizes: ['1 dúzia'],
+                extras: ['Ketchup', 'Mostarda', 'Maionese'],
+                popular: false,
+                dietary: [],
+            }
+        ];
+
+        let cart = [];
+        let currentCategory = 'Todos';
+        let activeFilters = {
+            price: null, // 'asc' or 'desc'
+            popularity: null, // 'desc'
+            dietary: [], // array of 'gluten-free', 'vegetarian'
+        };
+        let currentSearchTerm = '';
+        let currentView = 'home'; // 'home', 'dishDetail', 'cartView'
+
+        // --- DOM Elements ---
+        const menuListView = document.getElementById('menuListView');
+        const dishDetailView = document.getElementById('dishDetailView');
+        const cartView = document.getElementById('cartView');
+
+        const searchInput = document.getElementById('searchInput');
+        const mobileSearchInput = document.getElementById('mobileSearchInput');
+        const searchToggleButton = document.getElementById('searchToggleButton');
+        const mobileSearchContainer = document.getElementById('mobileSearchContainer');
+
+        const filterButton = document.getElementById('filterButton');
+        const filterModal = document.getElementById('filterModal');
+        const applyFiltersButton = document.getElementById('applyFiltersButton');
+        const resetFiltersButton = document.getElementById('resetFiltersButton');
+        let tempFilters = { ...activeFilters }; // To store filter choices before applying
+
+        const cartButton = document.getElementById('cartButton');
+        const cartItemCount = document.getElementById('cartItemCount');
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+        const emptyCartMessage = document.getElementById('emptyCartMessage');
+        const cartTotalPrice = document.getElementById('cartTotalPrice');
+
+        const deliveryOptionBtn = document.getElementById('deliveryOptionBtn');
+        const pickupOptionBtn = document.getElementById('pickupOptionBtn');
+        const deliveryForm = document.getElementById('deliveryForm');
+        const pickupForm = document.getElementById('pickupForm');
+        const finalizePurchaseBtn = document.getElementById('finalizePurchaseBtn');
+
+        let deliveryType = null; // 'delivery' or 'pickup'
+
+        // --- Helper Functions ---
+        function formatPrice(price) {
+            return `${price.toLocaleString('pt-AO')} KZ`;
+        }
+
+        function updateCartCount() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (totalItems > 0) {
+                cartItemCount.textContent = totalItems;
+                cartItemCount.classList.remove('hidden');
+            } else {
+                cartItemCount.classList.add('hidden');
+            }
+        }
+
+        // --- Render Functions ---
+        function updateMenuItemQuantityDisplay(dishId) {
+            const itemCard = menuListView.querySelector(`div[data-item-id="${dishId}"]`);
+            if (!itemCard) return;
+
+            const dish = menuItemsData.find(item => item.id === dishId);
+            if (!dish) return;
+
+            // Find the *first* item in cart matching the dishId, assuming the simple +/- from menu list
+            // always refers to the default size/extras, or the first instance if multiple.
+            // For the menu list, we only care about if *any* instance of the dish exists in the cart.
+            const quantityInCart = cart.filter(cartIt => cartIt.id === item.id).reduce((sum, item) => sum + item.quantity, 0);
+
+            // Update price (though it usually doesn't change on the main list)
+            const priceSpan = itemCard.querySelector('.text-2xl.font-heading.font-bold.text-brandYellow');
+            if (priceSpan) priceSpan.textContent = formatPrice(dish.price); // Assumes base price for display
+
+            let quantityControlsDiv = itemCard.querySelector('.flex.items-center.space-x-2');
+            if (!quantityControlsDiv) {
+                // If for some reason controls weren't rendered (e.g., initial state), create it.
+                // This might happen if a card was created with quantity 0 and then incremented.
+                quantityControlsDiv = document.createElement('div');
+                quantityControlsDiv.className = 'flex items-center space-x-2';
+                itemCard.querySelector('.p-4 > div').appendChild(quantityControlsDiv);
+            }
+
+            quantityControlsDiv.innerHTML = ''; // Clear existing controls
+
+            if (quantityInCart > 0) {
+                quantityControlsDiv.innerHTML += `
+                    <button class="remove-from-cart-btn p-1 rounded-full bg-brandYellow hover:bg-brandOrange text-brandWhite transition-colors focus:outline-none" data-id="${dish.id}">
+                        <i data-feather="minus" class="w-4 h-4"></i>
+                    </button>
+                    <span class="text-lg font-bold text-brandOrange">${quantityInCart}</span>
+                `;
+            }
+            quantityControlsDiv.innerHTML += `
+                <button class="add-to-cart-btn p-1 rounded-full bg-brandOrange hover:bg-brandYellow text-brandWhite transition-colors focus:outline-none" data-id="${dish.id}">
+                    <i data-feather="plus" class="w-4 h-4"></i>
+                </button>
+            `;
+            feather.replace(); // Re-render icons
+        }
+
+        function renderMenuItems() {
+            menuListView.innerHTML = ''; // Clear existing items
+            let filteredItems = [...menuItemsData];
+
+            // 1. Filter by Search Term
+            if (currentSearchTerm) {
+                const lowerCaseSearchTerm = currentSearchTerm.toLowerCase();
+                filteredItems = filteredItems.filter(item =>
+                    item.name.toLowerCase().includes(lowerCaseSearchTerm) ||
+                    item.shortDescription.toLowerCase().includes(lowerCaseSearchTerm)
+                );
+            }
+
+            // 2. Filter by Category
+            if (currentCategory !== 'Todos') {
+                filteredItems = filteredItems.filter(item => item.category === currentCategory);
+            }
+
+            // 3. Apply Filters (Price, Popularity, Dietary)
+            if (activeFilters.price) {
+                filteredItems.sort((a, b) => {
+                    return activeFilters.price === 'asc' ? a.price - b.price : b.price - a.price;
+                });
+            }
+            if (activeFilters.popularity === 'desc') {
+                filteredItems.sort((a, b) => (b.popular ? 1 : 0) - (a.popular ? 1 : 0));
+            }
+            if (activeFilters.dietary.length > 0) {
+                filteredItems = filteredItems.filter(item =>
+                    activeFilters.dietary.every(diet => item.dietary.includes(diet))
+                );
+            }
+
+            if (filteredItems.length === 0) {
+                menuListView.innerHTML = `<p class="col-span-full text-center text-xl text-brandOrange mt-8">Nenhum prato encontrado com os critérios selecionados.</p>`;
+                return;
+            }
+
+            filteredItems.forEach(item => {
+                const quantityInCart = cart.filter(cartIt => cartIt.id === item.id).reduce((sum, cartIt) => sum + cartIt.quantity, 0);
+
+                const itemCard = document.createElement('div');
+                itemCard.className = `bg-brandWhite rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden group border border-brandYellow`;
+                itemCard.setAttribute('data-aos', 'fade-up');
+                itemCard.setAttribute('data-item-id', item.id); // Add data-item-id for easy selection
+                itemCard.innerHTML = `
+                    <div class="relative">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-48 object-cover cursor-pointer" onclick="showDishDetail('${item.id}')">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brandOrange/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                            <button onclick="showDishDetail('${item.id}')" class="bg-brandWhite text-brandOrange px-4 py-2 rounded-full text-sm font-semibold hover:bg-brandYellow transition-colors focus:outline-none focus:ring-2 focus:ring-brandOrange">
+                                Ver Detalhes
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4 flex flex-col justify-between h-auto">
+                        <h3 class="text-xl font-heading font-semibold text-brandOrange mb-2 cursor-pointer" onclick="showDishDetail('${item.id}')">${item.name}</h3>
+                        <p class="text-sm text-brandOrange mb-3 opacity-80">${item.shortDescription}</p>
+                        <div class="flex items-center justify-between mt-auto">
+                            <span class="text-2xl font-heading font-bold text-brandYellow">${formatPrice(item.price)}</span>
+                            <div class="flex items-center space-x-2">
+                                ${quantityInCart > 0 ? `
+                                    <button class="remove-from-cart-btn p-1 rounded-full bg-brandYellow hover:bg-brandOrange text-brandWhite transition-colors focus:outline-none" data-id="${item.id}">
+                                        <i data-feather="minus" class="w-4 h-4"></i>
+                                    </button>
+                                    <span class="text-lg font-bold text-brandOrange">${quantityInCart}</span>
+                                ` : ''}
+                                <button class="add-to-cart-btn p-1 rounded-full bg-brandOrange hover:bg-brandYellow text-brandWhite transition-colors focus:outline-none" data-id="${item.id}">
+                                    <i data-feather="plus" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                menuListView.appendChild(itemCard);
+            });
+            feather.replace(); // Re-render icons after adding new elements
+        }
+
+        function showDishDetail(dishId) {
+            const dish = menuItemsData.find(item => item.id === dishId);
+            if (!dish) return;
+
+            // Reset quantity to 1 and selected options
+            let currentQuantity = 1;
+            let currentSelectedSize = dish.sizes && dish.sizes.length > 0 ? dish.sizes[0] : null;
+            let currentSelectedExtras = [];
+
+            const updateDetailView = () => {
+                document.getElementById('detailDishName').textContent = dish.name;
+                document.getElementById('detailDishImage').src = dish.image;
+                document.getElementById('detailDishFullDescription').textContent = dish.fullDescription;
+                document.getElementById('detailQuantity').textContent = currentQuantity;
+                
+                // Calculate price based on quantity, size, and extras
+                let calculatedPrice = dish.price * currentQuantity;
+                // Add logic for size price adjustments if applicable (not in data, but good for future)
+                // Add logic for extra prices
+                currentSelectedExtras.forEach(extra => {
+                    if (extra.includes('(+')) {
+                        const priceMatch = extra.match(/\(\+(\d+)\sKZ\)/);
+                        if (priceMatch && priceMatch[1]) {
+                            calculatedPrice += parseInt(priceMatch[1]) * currentQuantity;
+                        }
+                    }
+                });
+                document.getElementById('detailDishPrice').textContent = formatPrice(calculatedPrice);
+
+                const addToCartBtn = document.getElementById('detailAddToCartBtn');
+                const removeFromCartBtn = document.getElementById('detailRemoveFromCartBtn');
+                
+                addToCartBtn.onclick = () => {
+                    currentQuantity++;
+                    updateDetailView();
+                };
+                removeFromCartBtn.onclick = () => {
+                    if (currentQuantity > 1) {
+                        currentQuantity--;
+                        updateDetailView();
+                    }
+                };
+                removeFromCartBtn.disabled = currentQuantity <= 1;
+
+                // Render sizes
+                const sizesContainer = document.getElementById('sizesContainer');
+                sizesContainer.innerHTML = '';
+                if (dish.sizes && dish.sizes.length > 0) {
+                    document.getElementById('detailSizes').classList.remove('hidden');
+                    dish.sizes.forEach(size => {
+                        const sizeBtn = document.createElement('button');
+                        sizeBtn.className = `py-2 px-4 rounded-full border-2 border-brandYellow text-brandOrange font-semibold transition-colors focus:outline-none ${currentSelectedSize === size ? 'bg-brandOrange text-brandWhite' : 'bg-brandWhite hover:bg-brandYellow hover:text-brandOrange'}`;
+                        sizeBtn.textContent = size;
+                        sizeBtn.onclick = () => {
+                            currentSelectedSize = size;
+                            updateDetailView();
+                        };
+                        sizesContainer.appendChild(sizeBtn);
+                    });
+                } else {
+                    document.getElementById('detailSizes').classList.add('hidden');
+                }
+
+                // Render extras
+                const extrasContainer = document.getElementById('extrasContainer');
+                extrasContainer.innerHTML = '';
+                if (dish.extras && dish.extras.length > 0) {
+                    document.getElementById('detailExtras').classList.remove('hidden');
+                    dish.extras.forEach(extra => {
+                        const extraBtn = document.createElement('button');
+                        extraBtn.className = `py-2 px-4 rounded-full border-2 border-brandYellow text-brandOrange font-semibold transition-colors focus:outline-none ${currentSelectedExtras.includes(extra) ? 'bg-brandOrange text-brandWhite' : 'bg-brandWhite hover:bg-brandYellow hover:text-brandOrange'}`;
+                        extraBtn.textContent = extra;
+                        extraBtn.onclick = () => {
+                            if (currentSelectedExtras.includes(extra)) {
+                                currentSelectedExtras = currentSelectedExtras.filter(e => e !== extra);
+                            } else {
+                                currentSelectedExtras.push(extra);
+                            }
+                            updateDetailView();
+                        };
+                        extrasContainer.appendChild(extraBtn);
+                    });
+                } else {
+                    document.getElementById('detailExtras').classList.add('hidden');
+                }
+
+                // Add to Cart button for dish detail
+                document.getElementById('addDishToCart').onclick = () => {
+                    addToCart(dish.id, currentQuantity, currentSelectedSize, currentSelectedExtras, true); // `true` indicates it's from a detailed view
+                    renderPage('home'); // Go back to menu after adding
+                };
+                feather.replace(); // Re-render icons
+            };
+
+            updateDetailView();
+            renderPage('dishDetail');
+        }
+
+        function updateCartTotals() {
+            let total = 0;
+            if (cart.length === 0) {
+                emptyCartMessage.classList.remove('hidden');
+                finalizePurchaseBtn.disabled = true;
+            } else {
+                emptyCartMessage.classList.add('hidden');
+                cart.forEach(item => {
+                    const dish = menuItemsData.find(d => d.id === item.id);
+                    if (!dish) return;
+                    let itemPrice = dish.price;
+                    item.extras.forEach(extra => {
+                        if (extra.includes('(+')) {
+                            const priceMatch = extra.match(/\(\+(\d+)\sKZ\)/);
+                            if (priceMatch && priceMatch[1]) {
+                                itemPrice += parseInt(priceMatch[1]);
+                            }
+                        }
+                    });
+                    total += itemPrice * item.quantity;
+                });
+                finalizePurchaseBtn.disabled = false;
+            }
+            cartTotalPrice.textContent = formatPrice(total);
+        }
+
+        function updateCartItemQuantityDisplay(cartItem) {
+            const normalizedSize = cartItem.size || 'standard';
+            const extrasString = JSON.stringify(cartItem.extras);
+            const selector = `.cart-item-card[data-id="${cartItem.id}"][data-size="${normalizedSize}"][data-extras='${extrasString}']`;
+            let cartItemDiv = cartItemsContainer.querySelector(selector);
+            const dish = menuItemsData.find(d => d.id === cartItem.id);
+            if (!dish) return;
+
+            let itemPrice = dish.price;
+            cartItem.extras.forEach(extra => {
+                if (extra.includes('(+')) {
+                    const priceMatch = extra.match(/\(\+(\d+)\sKZ\)/);
+                    if (priceMatch && priceMatch[1]) {
+                        itemPrice += parseInt(priceMatch[1]);
+                    }
+                }
+            });
+
+            if (cartItem.quantity <= 0) {
+                if (cartItemDiv) {
+                    cartItemDiv.remove(); // Remove from DOM if quantity is 0 or less
+                }
+            } else {
+                if (!cartItemDiv) {
+                    // If item doesn't exist in DOM, create it
+                    cartItemDiv = document.createElement('div');
+                    cartItemDiv.className = `flex items-center p-3 md:p-4 bg-brandYellow bg-opacity-10 rounded-lg shadow-sm cart-item-card`;
+                    cartItemDiv.setAttribute('data-id', cartItem.id);
+                    cartItemDiv.setAttribute('data-size', normalizedSize);
+                    cartItemDiv.setAttribute('data-extras', extrasString);
+                    cartItemsContainer.appendChild(cartItemDiv);
+                }
+
+                cartItemDiv.innerHTML = `
+                    <img src="${dish.image}" alt="${dish.name}" class="w-16 h-16 md:w-20 md:h-20 object-cover rounded-md mr-4 border border-brandYellow">
+                    <div class="flex-grow">
+                        <h4 class="text-lg md:text-xl font-heading font-semibold text-brandOrange">${dish.name}</h4>
+                        <p class="text-sm text-brandOrange opacity-80">${normalizedSize !== 'standard' ? normalizedSize + ', ' : ''} ${cartItem.extras.join(', ')}</p>
+                        <span class="text-base font-medium text-brandOrange">${formatPrice(itemPrice)} / un.</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="cart-remove-item p-1 rounded-full bg-brandYellow hover:bg-brandOrange text-brandWhite transition-colors focus:outline-none" data-id="${cartItem.id}" data-size="${normalizedSize}" data-extras='${extrasString}'>
+                            <i data-feather="minus" class="w-5 h-5"></i>
+                        </button>
+                        <span class="text-lg font-bold text-brandOrange">${cartItem.quantity}</span>
+                        <button class="cart-add-item p-1 rounded-full bg-brandOrange hover:bg-brandYellow text-brandWhite transition-colors focus:outline-none" data-id="${cartItem.id}" data-size="${normalizedSize}" data-extras='${extrasString}'>
+                            <i data-feather="plus" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                `;
+            }
+            feather.replace(); // Re-render icons
+            updateCartTotals();
+        }
+
+        function renderCart() {
+            // Re-render all cart items from scratch for a full refresh,
+            // but use granular updates for individual +/- actions
+            cartItemsContainer.innerHTML = ''; 
+            if (cart.length === 0) {
+                emptyCartMessage.classList.remove('hidden');
+            } else {
+                emptyCartMessage.classList.add('hidden');
+                cart.forEach(item => updateCartItemQuantityDisplay(item));
+            }
+            updateCartCount();
+            updateCartTotals(); // Recalculate and display total
+        }
+
+        function renderPage(view) {
+            menuListView.classList.add('hidden');
+            dishDetailView.classList.add('hidden');
+            cartView.classList.add('hidden');
+            
+            // Hide all overlays/modals
+            filterModal.classList.add('hidden');
+
+            currentView = view;
+            if (view === 'home') {
+                menuListView.classList.remove('hidden');
+                renderMenuItems(); // Full render on initial load or category/filter change
+            } else if (view === 'dishDetail') {
+                dishDetailView.classList.remove('hidden');
+            } else if (view === 'cartView') {
+                cartView.classList.remove('hidden');
+                renderCart(); // Full render of cart when opening cart view
+                // Ensure forms are hidden initially when cart opens
+                deliveryForm.classList.add('hidden');
+                pickupForm.classList.add('hidden');
+                deliveryOptionBtn.classList.remove('bg-brandOrange', 'text-brandWhite');
+                deliveryOptionBtn.classList.add('bg-brandWhite', 'text-brandOrange');
+                pickupOptionBtn.classList.remove('bg-brandOrange', 'text-brandWhite');
+                pickupOptionBtn.classList.add('bg-brandWhite', 'text-brandOrange');
+                deliveryType = null;
+                finalizePurchaseBtn.disabled = true; // Disable until option selected
+            }
+            AOS.refresh(); // Refresh AOS to detect new elements
+        }
+
+        // --- Cart Management ---
+        function addToCart(dishId, quantity = 1, size = 'standard', extras = [], isUpdateFromDetailOrCartView = false) {
+            const dish = menuItemsData.find(item => item.id === dishId);
+            if (!dish) return;
+
+            const normalizedSize = size || 'standard'; // Ensure size is always a string for comparison
+            const existingCartItem = cart.find(item => item.id === dishId && item.size === normalizedSize && JSON.stringify(item.extras) === JSON.stringify(extras));
+
+            if (existingCartItem) {
+                existingCartItem.quantity += quantity;
+            } else {
+                const newCartItem = { id: dishId, name: dish.name, price: dish.price, quantity: quantity, image: dish.image, size: normalizedSize, extras };
+                cart.push(newCartItem);
+            }
+
+            updateCartCount();
+            updateMenuItemQuantityDisplay(dishId); // Always update menu item card on the main list
+            
+            if (currentView === 'cartView' || isUpdateFromDetailOrCartView) {
+                const updatedItem = cart.find(item => item.id === dishId && item.size === normalizedSize && JSON.stringify(item.extras) === JSON.stringify(extras));
+                updateCartItemQuantityDisplay(updatedItem);
+            }
+        }
+
+        function removeFromCart(dishId, quantity = 1, size = 'standard', extras = [], isUpdateFromDetailOrCartView = false) {
+            const normalizedSize = size || 'standard';
+            const existingCartItemIndex = cart.findIndex(item => item.id === dishId && item.size === normalizedSize && JSON.stringify(item.extras) === JSON.stringify(extras));
+
+            if (existingCartItemIndex !== -1) {
+                const existingCartItem = cart[existingCartItemIndex];
+                existingCartItem.quantity -= quantity;
+
+                if (existingCartItem.quantity <= 0) {
+                    cart.splice(existingCartItemIndex, 1);
+                }
+
+                updateCartCount();
+                updateMenuItemQuantityDisplay(dishId); // Always update menu item card on the main list
+                
+                if (currentView === 'cartView' || isUpdateFromDetailOrCartView) {
+                    updateCartItemQuantityDisplay(existingCartItem); // Pass the item (even if removed, for removal logic)
+                }
+            }
+        }
+
+        // --- Event Listeners ---
+        // Category Navigation
+        document.querySelectorAll('.category-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.classList.remove('active', 'bg-brandOrange', 'text-brandWhite');
+                    btn.classList.add('bg-brandYellow', 'text-brandOrange');
+                });
+                button.classList.add('active', 'bg-brandOrange', 'text-brandWhite');
+                button.classList.remove('bg-brandYellow', 'text-brandOrange');
+                currentCategory = button.dataset.category;
+                filterMenuItems(); // This will trigger a full renderMenuItems
+            });
+        });
+
+        // Search Input
+        function filterMenuItems() {
+            currentSearchTerm = searchInput.value || mobileSearchInput.value;
+            renderMenuItems(); // This will trigger a full renderMenuItems
+        }
+        searchInput.addEventListener('keyup', filterMenuItems);
+        mobileSearchInput.addEventListener('keyup', filterMenuItems);
+
+        // Mobile Search Toggle
+        searchToggleButton.addEventListener('click', () => {
+            mobileSearchContainer.classList.toggle('hidden');
+            if (!mobileSearchContainer.classList.contains('hidden')) {
+                mobileSearchInput.focus();
+            }
+        });
+
+
+        // Filter Modal
+        filterButton.addEventListener('click', () => {
+            filterModal.classList.remove('hidden');
+            tempFilters = { ...activeFilters }; // Initialize temp filters
+            
+            // Set initial state of filter buttons in the modal
+            document.querySelectorAll('.filter-option-btn').forEach(btn => {
+                btn.classList.remove('bg-brandOrange', 'text-brandWhite', 'border-brandOrange'); // Deselect
+                btn.classList.add('bg-brandWhite', 'text-brandOrange', 'border-brandYellow'); // Default style
+            });
+
+            if (tempFilters.price) {
+                document.querySelector(`.price-filter[data-filter-value="${tempFilters.price}"]`).classList.add('bg-brandOrange', 'text-brandWhite', 'border-brandOrange');
+            }
+            if (tempFilters.popularity) {
+                document.querySelector(`.popularity-filter[data-filter-value="${tempFilters.popularity}"]`).classList.add('bg-brandOrange', 'text-brandWhite', 'border-brandOrange');
+            }
+            tempFilters.dietary.forEach(diet => {
+                const btn = document.querySelector(`.dietary-filter[data-filter-value="${diet}"]`);
+                if (btn) {
+                    btn.classList.add('bg-brandOrange', 'text-brandWhite', 'border-brandOrange');
+                }
+            });
+        });
+
+        filterModal.addEventListener('click', (e) => {
+            if (e.target === filterModal) { // Clicked outside the modal content
+                filterModal.classList.add('hidden');
+            }
+        });
+
+        document.querySelectorAll('.filter-option-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const type = e.target.dataset.filterType;
+                const value = e.target.dataset.filterValue;
+
+                if (type === 'price' || type === 'popularity') {
+                    // Deselect others of the same type
+                    document.querySelectorAll(`.${type}-filter`).forEach(b => {
+                        b.classList.remove('bg-brandOrange', 'text-brandWhite', 'border-brandOrange');
+                        b.classList.add('bg-brandWhite', 'text-brandOrange', 'border-brandYellow');
+                    });
+                    // Select current
+                    e.target.classList.add('bg-brandOrange', 'text-brandWhite', 'border-brandOrange');
+                    tempFilters[type] = value;
+                } else if (type === 'dietary') {
+                    // Toggle selection for dietary
+                    if (tempFilters.dietary.includes(value)) {
+                        tempFilters.dietary = tempFilters.dietary.filter(d => d !== value);
+                        e.target.classList.remove('bg-brandOrange', 'text-brandWhite', 'border-brandOrange');
+                        e.target.classList.add('bg-brandWhite', 'text-brandOrange', 'border-brandYellow');
+                    } else {
+                        tempFilters.dietary.push(value);
+                        e.target.classList.add('bg-brandOrange', 'text-brandWhite', 'border-brandOrange');
+                        e.target.classList.remove('bg-brandWhite', 'text-brandOrange', 'border-brandYellow');
+                    }
+                }
+            });
+        });
+
+        applyFiltersButton.addEventListener('click', () => {
+            activeFilters = { ...tempFilters }; // Apply filters from temp storage
+            filterModal.classList.add('hidden');
+            renderMenuItems(); // This will trigger a full renderMenuItems
+        });
+
+        resetFiltersButton.addEventListener('click', () => {
+            tempFilters = { price: null, popularity: null, dietary: [] };
+            document.querySelectorAll('.filter-option-btn').forEach(btn => {
+                btn.classList.remove('bg-brandOrange', 'text-brandWhite', 'border-brandOrange');
+                btn.classList.add('bg-brandWhite', 'text-brandOrange', 'border-brandYellow');
+            });
+        });
+
+        // Cart Button
+        cartButton.addEventListener('click', () => renderPage('cartView'));
+
+        // Delegated event listener for "Add to Cart" and "Remove from Cart" buttons on menu list view
+        document.getElementById('menuListView').addEventListener('click', (e) => {
+            const targetButton = e.target.closest('.add-to-cart-btn, .remove-from-cart-btn');
+            if (targetButton) {
+                const dishId = targetButton.dataset.id;
+                if (targetButton.classList.contains('add-to-cart-btn')) {
+                    addToCart(dishId, 1); // Default quantity, size, extras for list view actions
+                } else if (targetButton.classList.contains('remove-from-cart-btn')) {
+                    removeFromCart(dishId, 1);
+                }
+            }
+        });
+
+        // Delegated event listener for "Add to Cart" and "Remove from Cart" buttons within the cart view
+        document.getElementById('cartItemsContainer').addEventListener('click', (e) => {
+            const targetButton = e.target.closest('.cart-add-item, .cart-remove-item');
+            if (targetButton) {
+                const id = targetButton.dataset.id;
+                const size = targetButton.dataset.size;
+                const extras = JSON.parse(targetButton.dataset.extras);
+                
+                if (targetButton.classList.contains('cart-add-item')) {
+                    addToCart(id, 1, size, extras, true); // true indicates update from cart view
+                } else if (targetButton.classList.contains('cart-remove-item')) {
+                    removeFromCart(id, 1, size, extras, true); // true indicates update from cart view
+                }
+            }
+        });
+
+        // Cart Delivery/Pickup Options
+        deliveryOptionBtn.addEventListener('click', () => {
+            deliveryType = 'delivery';
+            deliveryForm.classList.remove('hidden');
+            pickupForm.classList.add('hidden');
+            deliveryOptionBtn.classList.add('bg-brandOrange', 'text-brandWhite');
+            deliveryOptionBtn.classList.remove('bg-brandWhite', 'text-brandOrange');
+            pickupOptionBtn.classList.remove('bg-brandOrange', 'text-brandWhite');
+            pickupOptionBtn.classList.add('bg-brandWhite', 'text-brandOrange');
+            finalizePurchaseBtn.disabled = false;
+        });
+
+        pickupOptionBtn.addEventListener('click', () => {
+            deliveryType = 'pickup';
+            pickupForm.classList.remove('hidden');
+            deliveryForm.classList.add('hidden');
+            pickupOptionBtn.classList.add('bg-brandOrange', 'text-brandWhite');
+            pickupOptionBtn.classList.remove('bg-brandWhite', 'text-brandOrange');
+            deliveryOptionBtn.classList.remove('bg-brandOrange', 'text-brandWhite');
+            deliveryOptionBtn.classList.add('bg-brandWhite', 'text-brandOrange');
+            finalizePurchaseBtn.disabled = false;
+        });
+
+        // Finalize Purchase Button
+        finalizePurchaseBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                alert('Seu carrinho está vazio!');
+                return;
+            }
+
+            let orderDetails = [];
+            let totalOrderPrice = 0;
+
+            cart.forEach(item => {
+                const dish = menuItemsData.find(d => d.id === item.id);
+                if (!dish) return;
+
+                let itemPrice = dish.price;
+                item.extras.forEach(extra => {
+                    if (extra.includes('(+')) {
+                        const priceMatch = extra.match(/\(\+(\d+)\sKZ\)/);
+                        if (priceMatch && priceMatch[1]) {
+                            itemPrice += parseInt(priceMatch[1]);
+                        }
+                    }
+                });
+                
+                const itemTotalPrice = itemPrice * item.quantity;
+                totalOrderPrice += itemTotalPrice;
+
+                let itemDescription = `${item.quantity}x ${item.name} (${formatPrice(itemPrice)} cada)`;
+                if (item.size && item.size !== 'standard') itemDescription += ` [Tamanho: ${item.size}]`;
+                if (item.extras && item.extras.length > 0) itemDescription += ` [Extras: ${item.extras.join(', ')}]`;
+                orderDetails.push(itemDescription);
+            });
+
+            let customerName = '';
+            let customerContact = '';
+            let whatsappMessage = `Olá Lolly Burgers! Gostaria de fazer o seguinte pedido:\n\n`;
+
+            whatsappMessage += orderDetails.join('\n');
+            whatsappMessage += `\n\nTotal: ${formatPrice(totalOrderPrice)}`;
+
+            if (deliveryType === 'delivery') {
+                customerName = document.getElementById('deliveryName').value;
+                customerContact = document.getElementById('deliveryContact').value;
+                const address = document.getElementById('deliveryAddress').value;
+                const notes = document.getElementById('deliveryNotes').value;
+
+                if (!customerName || !customerContact || !address) {
+                    alert('Por favor, preencha todos os campos para Delivery: Nome, Contacto e Endereço.');
+                    return;
+                }
+                whatsappMessage += `\n\nRemessa: Delivery\nNome: ${customerName}\nContacto: ${customerContact}\nEndereço: ${address}`;
+                if (notes) whatsappMessage += `\nObservações: ${notes}`;
+            } else if (deliveryType === 'pickup') {
+                customerName = document.getElementById('pickupName').value;
+                customerContact = document.getElementById('pickupContact').value;
+
+                if (!customerName || !customerContact) {
+                    alert('Por favor, preencha todos os campos para Recolha: Nome e Contacto.');
+                    return;
+                }
+                whatsappMessage += `\n\nRemessa: Ir buscar no local\nNome: ${customerName}\nContacto: ${customerContact}`;
+            } else {
+                alert('Por favor, selecione uma opção de entrega (Delivery ou Ir buscar no local).');
+                return;
+            }
+
+            const encodedMessage = encodeURIComponent(whatsappMessage);
+            const whatsappUrl = `https://wa.me/244923038025?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+
+            // Clear cart and redirect after successful order
+            cart = [];
+            updateCartCount();
+            renderPage('home');
+            alert('Seu pedido foi enviado para o WhatsApp da Lolly Burgers! Entraremos em contacto em breve.');
+        });
+
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPage('home'); // Render home view on load
+            updateCartCount(); // Initialize cart count
+        });
+
+        // Handle browser back/forward (simple history management)
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.view) {
+                renderPage(event.state.view);
+            } else {
+                renderPage('home'); // Default to home if state is not defined
+            }
+        });
+
+    </script>
+</body>
+</html>
